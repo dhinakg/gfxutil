@@ -8,12 +8,12 @@ on:
     types: [published]
 
 env:
-  PROJECT_TYPE: TOOL
+  PROJECT_TYPE: LEGACY_TOOL
 
 jobs:
   build:
     name: Build
-    runs-on: macos-latest
+    runs-on: macos-10.14
     env:
       JOB_TYPE: BUILD
     steps:
@@ -26,10 +26,13 @@ jobs:
           path: edk2
       - name: CI Bootstrap
         run: |
-          cd gfxutil; src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+          src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/dhinakg/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+        working-directory: gfxutil
 
-      - run: cd gfxutil; xcodebuild -jobs 1 -configuration Debug
-      - run: cd gfxutil; xcodebuild -jobs 1 -configuration Release
+      - run: xcodebuild -jobs 1 -configuration Debug
+        working-directory: gfxutil
+      - run: xcodebuild -jobs 1 -configuration Release
+        working-directory: gfxutil
 
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v2
@@ -61,10 +64,13 @@ jobs:
 #           path: edk2
 #       - name: CI Bootstrap
 #         run: |
-#           cd gfxutil; src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+#           src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+#         working-directory: gfxutil
 # 
-#       - run: cd gfxutil; xcodebuild analyze -quiet -scheme gfxutil -configuration Debug CLANG_ANALYZER_OUTPUT=plist-html CLANG_ANALYZER_OUTPUT_DIR="$(pwd)/clang-analyze" && [ "$(find clang-analyze -name "*.html")" = "" ]
-#       - run: cd gfxutil; xcodebuild analyze -quiet -scheme gfxutil -configuration Release CLANG_ANALYZER_OUTPUT=plist-html CLANG_ANALYZER_OUTPUT_DIR="$(pwd)/clang-analyze" && [ "$(find clang-analyze -name "*.html")" = "" ]
+#       - run: xcodebuild analyze -quiet -scheme gfxutil -configuration Debug CLANG_ANALYZER_OUTPUT=plist-html CLANG_ANALYZER_OUTPUT_DIR="$(pwd)/clang-analyze" && [ "$(find clang-analyze -name "*.html")" = "" ]
+#         working-directory: gfxutil
+#       - run: xcodebuild analyze -quiet -scheme gfxutil -configuration Release CLANG_ANALYZER_OUTPUT=plist-html CLANG_ANALYZER_OUTPUT_DIR="$(pwd)/clang-analyze" && [ "$(find clang-analyze -name "*.html")" = "" ]
+#         working-directory: gfxutil
 # 
 #   analyze-coverity:
 #     name: Analyze Coverity
@@ -82,11 +88,13 @@ jobs:
 #           path: edk2
 #       - name: CI Bootstrap
 #         run: |
-#           cd gfxutil; src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+#           src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/ci-bootstrap.sh) && eval "$src" || exit 1
+#         working-directory: gfxutil
 # 
 #       - name: Run Coverity
 #         run: |
-#           cd gfxutil; src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/coverity/covstrap.sh) && eval "$src" || exit 1
+#           src=$(/usr/bin/curl -Lfs https://raw.githubusercontent.com/acidanthera/ocbuild/master/coverity/covstrap.sh) && eval "$src" || exit 1
+#         working-directory: gfxutil
 #         env:
 #           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
 #           COVERITY_SCAN_EMAIL: ${{ secrets.COVERITY_SCAN_EMAIL }}
